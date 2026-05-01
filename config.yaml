@@ -1,0 +1,127 @@
+# Training Configuration for Res_AttnGAN
+
+# Dataset Configuration
+dataset:
+  name: "dummy"  # Options: dummy, cub, coco
+  data_path: "data/CUB_200_2011"  # Path to dataset
+  split: "train"  # train or test
+  img_size: 64
+  num_workers: 4
+
+# Model Configuration
+model:
+  # Generator
+  generator:
+    context_dim: 256
+    img_channels: 3
+    hidden_dim: 512
+    use_dense_layers: false
+  
+  # Discriminator
+  discriminator:
+    num_scales: 4
+    img_channels: 3
+    context_dim: 256
+  
+  # Text Encoder
+  text_encoder:
+    vocab_size: 5000
+    word_dim: 300
+    sent_dim: 256
+    encoder_type: "lstm"  # lstm or roberta
+
+# Training Configuration
+training:
+  batch_size: 32
+  num_epochs: 100
+  learning_rate_g: 0.0002
+  learning_rate_d: 0.0002
+  beta1: 0.5
+  beta2: 0.999
+  weight_decay: 0.0
+  gradient_clip: 1.0
+  
+  # Loss weights
+  lambda_perceptual: 1.0
+  lambda_attn: 1.0
+  lambda_text: 1.0
+  
+  # Optimizer
+  optimizer: "adam"  # adam or sgd
+  
+  # Scheduling
+  lr_scheduler: "none"  # none, step, cosine
+  lr_decay_rate: 0.1
+  lr_decay_steps: 50
+
+# Loss Configuration
+loss:
+  loss_type: "hinge"  # hinge or wasserstein
+  perceptual_layer: "relu5_2"
+  use_attention_loss: true
+  use_text_loss: true
+  use_contrastive_loss: false
+  contrastive_temperature: 0.07
+
+# Validation Configuration
+validation:
+  eval_interval: 5  # Every N epochs
+  num_eval_samples: 100
+  save_images: true
+  compute_inception_score: false  # Requires pre-trained model
+  compute_fid_score: false
+
+# Checkpointing
+checkpoint:
+  save_interval: 10  # Every N epochs
+  checkpoint_dir: "checkpoints"
+  save_best_only: false
+  keep_last_k: 5
+
+# Logging
+logging:
+  log_dir: "logs"
+  log_interval: 100  # Every N iterations
+  log_tensorboard: true
+  log_wandb: false  # Weights & Biases
+  
+# Device Configuration
+device:
+  use_cuda: true
+  cuda_ids: [0]  # GPU IDs to use
+  mixed_precision: false
+
+# Augmentation
+augmentation:
+  horizontal_flip: true
+  color_jitter: true
+  jitter_brightness: 0.2
+  jitter_contrast: 0.2
+  jitter_saturation: 0.2
+  random_crop: false
+
+# Data Augmentation for Text
+text_augmentation:
+  use_augmentation: false
+  augmentation_type: "paraphrase"  # paraphrase or backtranslate
+
+# Advanced Options
+advanced:
+  use_spectral_norm: true
+  use_batch_norm: true
+  use_instance_norm: false
+  activation_function: "relu"  # relu or leaky_relu
+  leaky_relu_slope: 0.2
+  
+  # Regularization
+  use_dropout: false
+  dropout_rate: 0.5
+  use_l1_reg: false
+  l1_weight: 0.0001
+  use_l2_reg: false
+  l2_weight: 0.0001
+
+# Reproducibility
+seed: 42
+deterministic: true
+benchmark: false
